@@ -49,7 +49,7 @@ $redis->connect('127.0.0.1', 6379);
 $app = Yituo\Factory::TheBase($config);
 // 创建缓存实例
 $cache = new RedisAdapter($redis);
-// 替换应用中的缓存
+// 替换缓存
 $app->rebind('cache', $cache);
 
 ```
@@ -94,7 +94,7 @@ $app->item_categories->deleteItemToCagegories($item_category_id);
 
 > orders操作
 ```php
-$app->order->getOrders($item_id);
+$app->order->getOrders();
 $app->order->getOrderDetail($uniqueKey);
 $app->order->updateOrder($order_item_id, $status, $add_comment, $atobarai_status, $delivery_company_id, $tracking_number);
 ```
