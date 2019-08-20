@@ -1,0 +1,31 @@
+{
+    "name": "wengoooo/yituo",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Wengo",
+            "email": "398711943@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.6.0",
+        "pimple/pimple": "^3.2@dev",
+        "symfony/http-foundation": "3.4.x-dev",
+        "league/oauth2-client": "dev-master",
+        "symfony/cache": "3.4.x-dev",
+        "jaeger/querylist": "^3.2",
+        "predis/predis": "^2.0@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yituo\\": "src/"
+        }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
+    }
+}
