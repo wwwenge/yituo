@@ -7,11 +7,11 @@ use GuzzleHttp\Middleware;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Yituo\Core\Contracts\AccessTokenInterface;
-use Yituo\Core\Traits\HasHttpRequests;
+use Yituo\Core\Traits\HttpRequests;
 
 class BaseClient
 {
-    use HasHttpRequests { request as performRequest; }
+    use HttpRequests { request as performRequest; }
     /**
      * @var \Yituo\Core\ServiceContainer
      */

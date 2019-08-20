@@ -8,10 +8,10 @@ use GuzzleHttp\HandlerStack;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Trait HasHttpRequests.
+ * Trait HttpRequests.
  *
  */
-trait HasHttpRequests
+trait HttpRequests
 {
     use ResponseCastable;
 

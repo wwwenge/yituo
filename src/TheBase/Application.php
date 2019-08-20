@@ -13,7 +13,6 @@ use Yituo\Core\ServiceContainer;
 /**
  * Class Application.
  *
-* @property \Yituo\TheBase\Auth\AccessToken                           $access_token
 * @property \Yituo\TheBase\Order\Client                               $order
 * @property \Yituo\TheBase\Items\Client                               $items
 * @property \Yituo\TheBase\Category\Client                            $category

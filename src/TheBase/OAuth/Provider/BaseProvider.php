@@ -26,7 +26,7 @@ use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use phpQuery as pq;
 use Yituo\Core\Exceptions\RuntimeException;
-use Yituo\Core\Traits\HasHttpRequests;
+use Yituo\Core\Traits\HttpRequests;
 use Yituo\Core\Traits\InteractsWithCache;
 
 class BaseProvider extends AbstractProvider
@@ -41,7 +41,7 @@ class BaseProvider extends AbstractProvider
      * 公用Http请求类
      * @var \Yituo\Core\Traits\InteractsWithCache
      */
-    use HasHttpRequests;
+    use HttpRequests;
     use BearerAuthorizationTrait;
 
     protected $scope = '';
