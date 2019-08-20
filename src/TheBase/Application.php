@@ -25,7 +25,6 @@ use Yituo\Core\ServiceContainer;
 */
 class Application extends ServiceContainer {
     protected $providers = [
-        Auth\ServiceProvider::class,
         OAuth\ServiceProvider::class,
         Category\ServiceProvider::class,
         DeliveryCompany\ServiceProvider::class,

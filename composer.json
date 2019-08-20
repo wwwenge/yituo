@@ -7,15 +7,13 @@
             "email": "398711943@qq.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
-        "php": ">=5.6.0",
-        "pimple/pimple": "^3.2@dev",
-        "symfony/http-foundation": "3.4.x-dev",
-        "league/oauth2-client": "dev-master",
-        "symfony/cache": "3.4.x-dev",
-        "jaeger/querylist": "^3.2",
-        "predis/predis": "^2.0@dev"
+        "php": ">7.0",
+        "pimple/pimple": "^3.2",
+        "league/oauth2-client": "^2.4",
+        "symfony/cache": "^4.3",
+        "jaeger/querylist": "^4.1"
     },
     "autoload": {
         "psr-4": {
