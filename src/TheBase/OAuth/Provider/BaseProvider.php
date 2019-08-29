@@ -344,7 +344,7 @@ class BaseProvider extends AbstractProvider
      * @return string
      */
     public function getCode() {
-        $response = $this->sendRequest('POST', $this->getBaseAuthorizationUrl(), ['allow_redirects' => false, 'form_params' => array_merge($this->getAuthorizeData(), $this->getLoginData())]);
+        $response = $this->sendRequest('POST', $this->getBaseAuthorizationUrl(), ['debug' => $this->app['config']->get("http.debug"),'allow_redirects' => false, 'form_params' => array_merge($this->getAuthorizeData(), $this->getLoginData())]);
 
         if($response->getStatusCode() == 302) {
             $url = current($response->getHeader('Location'));

@@ -14,7 +14,7 @@ use Pimple\ServiceProviderInterface;
 
 class ServiceProvider implements ServiceProviderInterface {
     public function register(Container $app) {
-        $app['items_categories'] = function($app) {
+        $app['item_categories'] = function($app) {
             return new Client($app);
         };
 
