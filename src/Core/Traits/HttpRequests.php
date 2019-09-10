@@ -5,6 +5,7 @@ namespace Yituo\Core\Traits;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Pool;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -83,6 +84,7 @@ trait HttpRequests
      */
     public function getHttpClient(): ClientInterface
     {
+
         if (!($this->httpClient instanceof ClientInterface)) {
             if (property_exists($this, 'app') && $this->app['http_client']) {
                 $this->httpClient = $this->app['http_client'];
@@ -124,6 +126,15 @@ trait HttpRequests
     }
 
     /**
+     * 获取Cookies.
+     *
+     * @return array
+     */
+    public function getCookies() {
+        return $this->getHttpClient()->getConfig('cookies');
+    }
+
+    /**
      * 发起Http请求.
      *
      * @param string $url
@@ -149,6 +160,26 @@ trait HttpRequests
         $response->getBody()->rewind();
 
         return $response;
+    }
+
+    /**
+     * 发送请求
+     * @return void
+     */
+
+    public function multiRequest($requests) {
+        $pool = new Pool($this->getHttpClient(), $this->requests($requests), [
+            'concurrency' => $this->getConcurrency(),
+            'options'     => $this->getPoolOptions(),
+            'fulfilled'   => $this->handleAddSuccess(),
+            'rejected'    => $this->handleAddFaild(),
+        ]);
+
+        $promise = $pool->promise();
+
+        $promise->wait();
+
+        return $this->getOutput();
     }
 
     /**

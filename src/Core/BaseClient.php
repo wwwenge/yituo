@@ -3,6 +3,8 @@
 namespace Yituo\Core;
 
 
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Middleware;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -39,7 +41,6 @@ class BaseClient
         $this->app = $app;
         $this->token = $token ? $token : $this->app['oauth'];
     }
-
 
     public function httpPost(string $url, array $data = [])
     {
@@ -95,18 +96,24 @@ class BaseClient
         return Middleware::retry(function (
             $retries,
             RequestInterface $request,
-            ResponseInterface $response = null
+            ResponseInterface $response = null,
+            $exception = null
         ) {
+            if ($exception instanceof ConnectException || $exception instanceof RequestException) {
+                return true;
+            }
+
             // Limit the number of retries to 2
-            if ($retries < $this->app->config->get('http.max_retries', 1) && $response && $body = $response->getBody()) {
+            if ($retries < $this->app->config->get('http.max_retries', 3) && $response && $body = $response->getBody()) {
                 // Retry on server errors
                 $response = json_decode($body, true);
-
-                if (!empty($response['error']) && in_array($response['error'], ['invalid_request'], true)) {
-                    $this->token->refresh();
+                if(json_last_error() == JSON_ERROR_NONE) {
+                    if (!empty($response['error']) && in_array($response['error'], ['invalid_request'], true)) {
+                        $this->token->refresh();
 //                    $this->app['logger']->debug('Retrying with refreshed access token.');
 
-                    return true;
+                        return true;
+                    }
                 }
             }
 
@@ -115,6 +122,7 @@ class BaseClient
             return abs($this->app->config->get('http.retry_delay', 500));
         });
     }
+
 
     /**
      * 在header添加access token.
@@ -125,7 +133,7 @@ class BaseClient
     {
         return function (callable $handler) {
             return function (RequestInterface $request, array $options) use ($handler) {
-                if ($this->token) {
+                if ($this->token && stripos($this->app->config->get('http.base_uri'), $request->getUri()->getHost()) !== false) {
                     $request = $this->token->applyToHeader($request, $options);
                 }
 

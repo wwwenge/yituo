@@ -17,5 +17,9 @@ class ServiceProvider implements ServiceProviderInterface{
         $app['order'] = function ($app) {
             return new Client($app);
         };
+
+        $app['mulit_orders'] = function ($app) {
+            return new MulitClient($app);
+        };
     }
 }

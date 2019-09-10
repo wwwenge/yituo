@@ -1,18 +1,18 @@
 <?php
-/**
- * This file is part of the wengo/basesdk.
- *
- * (c) basesdk <398711943@qq.com>
- *
- */
-
 namespace Yituo\TheBase\Items;
 
 
+use DOMElement;
+use GuzzleHttp\Pool;
+use GuzzleHttp\Psr7\Request;
+use Psr\Http\Message\RequestInterface;
 use Yituo\Core\BaseClient;
+use phpQuery as pq;
 
 class Client extends BaseClient
 {
+    public $jar;
+
     /**
      * 获取所有产品
      * @param  array $options
@@ -143,5 +143,94 @@ class Client extends BaseClient
         );
 
         return $this->httpPost('/1/items/delete_variation', $options);
+    }
+
+    public function batchAddItem($products) {
+        $this->login();
+//        $this->pushMiddleware($this->loginMiddleware(), 'login');
+        $options = ['handler' => $this->getHandlerStack()];
+        $options['base_uri'] = 'https://admin.thebase.in/';
+        $options['cookies'] = $this->jar;
+        $pool = new Pool($this->getHttpClient(), $this->requests($products), [
+            'concurrency' => 5,
+            'options'     => $options,
+            'fulfilled'   => $this->handleAddSuccess(),
+            'rejected'    => $this->handleAddFaild(),
+        ]);
+
+        $promise = $pool->promise();
+
+        $promise->wait();
+
+    }
+
+    public function requests($products) {
+        foreach($products as $product) {
+//            $options['form_params'] = $product;
+//            yield new Request("POST", 'shop_admin/api/items/add', $options);
+            yield new Request("get", 'https://admin.thebase.in/dashboard');
+        }
+    }
+
+    public function handleAddSuccess () {
+        return function($response, $index) {
+            file_put_contents('H:/ceshi.html', $response->getBody());
+            var_dump(12345);
+            var_dump($response->getStatusCode());
+        };
+    }
+    public function handleAddFaild () {
+        return function($reason, $index) {
+
+            var_dump($reason->getMessage());
+        };
+    }
+
+    public function login() {
+        $client = new \GuzzleHttp\Client(['cookies' => true, 'debug' => true]);
+        $response = $client->get('https://admin.thebase.in/users/login');
+        $params = [];
+        if($response->getStatusCode() == 200) {
+            $document = pq::newDocumentHTML($response->getBody());
+            $document->find("#userLoginForm input")->each(function(DOMElement $element) use(&$params) {
+                $params[$element->getAttribute("name")] = $element->getAttribute("value");
+            });
+
+            $params['data[User][mail_address]'] = 'sale@20secret.com';
+            $params['data[User][password]']     = '1q1q1q1q';
+
+            $response = $client->post('https://admin.thebase.in' . $document->find("#userLoginForm")->attr('action'), ['form_params' => $params]);
+            $this->jar = $client->getConfig('cookies');
+        }
+    }
+    /**
+     * 登录中间件
+     */
+    protected function loginMiddleware() {
+        return function (callable $handler) {
+            return function (RequestInterface $request, array $options) use ($handler) {
+
+                if(sizeof($options['cookies']) == 0) {
+
+                    $client = new \GuzzleHttp\Client(['cookies' => true]);
+                    $response = $client->get('https://admin.thebase.in/users/login');
+                    $params = [];
+                    if($response->getStatusCode() == 200) {
+                        $document = pq::newDocumentHTML($response->getBody());
+                        $document->find("#userLoginForm input")->each(function(DOMElement $element) use(&$params) {
+                            $params[$element->getAttribute("name")] = $element->getAttribute("value");
+                        });
+
+                        $params['data[User][mail_address]'] = 'sale@20secret.com';
+                        $params['data[User][password]']     = '1q1q1q1q';
+
+                        $response = $client->post('https://admin.thebase.in' . $document->find("#userLoginForm")->attr('action'), ['form_params' => $params]);
+                        $options['cookies'] = $client->getConfig('cookies');
+                    }
+                }
+
+                return $handler($request, $options);
+            };
+        };
     }
 }

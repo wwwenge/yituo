@@ -15,6 +15,9 @@ use Yituo\Core\ServiceContainer;
  *
 * @property \Yituo\TheBase\Order\Client                               $order
 * @property \Yituo\TheBase\Items\Client                               $items
+* @property \Yituo\TheBase\Items\MulitClient                          $mulit_items
+* @property \Yituo\TheBase\Category\MulitClient                       $mulit_categories
+* @property \Yituo\TheBase\Order\MulitClient                          $mulit_orders
 * @property \Yituo\TheBase\Category\Client                            $category
 * @property \Yituo\TheBase\DeliveryCompany\Client                     $delivery_company
 * @property \Yituo\TheBase\ItemCategories\Client                      $item_categories
@@ -31,6 +34,7 @@ class Application extends ServiceContainer {
         Savings\ServiceProvider::class,
         User\ServiceProvider::class,
         Items\ServiceProvider::class,
+//        Mulit\Items\ServiceProvider::class,
         Order\ServiceProvider::class
     ];
 }
