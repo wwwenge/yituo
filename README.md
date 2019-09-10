@@ -98,3 +98,360 @@ $app->order->getOrders();
 $app->order->getOrderDetail($uniqueKey);
 $app->order->updateOrder($order_item_id, $status, $add_comment, $atobarai_status, $delivery_company_id, $tracking_number);
 ```
+
+
+## 并发请求
+> categories操作
+```php
+$app->mulit_categories->addCategories([['name' => 'bbb','parent_id' => '0'], ['name' => 'cccc','parent_id' => '0']]);
+$app->mulit_categories->deleteCategories[['id' => "1921361"], ['id' => "1921361"]]);
+var_dump($app->mulit_categories->getCategories());
+```
+> items操作
+```php
+var_dump($app->mulit_items->getItems());
+var_dump($app->mulit_items->getItem([['item_id' => '23124163'], ['item_id' => '23124163']]));
+$app->mulit_items->sortItems(['item_ids' => ["23120451", "23061078", "23086207", "23086212", "23085510"]]);
+$app->mulit_items->deleteItems(['item_ids' => ["23123894", "23120451"]]);
+var_dump($app->mulit_items->uploadImages(['H:/2.jpg', 'H:/3.jpg']));
+
+$app->mulit_items->addItems([array (
+    'item' =>
+        array (
+            'variations' =>
+                array (
+                    0 =>
+                        array (
+                            'id' => '',
+                            'name' => 'ブラック/M',
+                            'stock' => '1000',
+                        ),
+                    1 =>
+                        array (
+                            'id' => '',
+                            'name' => 'ブラック/L',
+                            'stock' => '1000',
+                        ),
+                ),
+            'visible' => true,
+            'stock' => 0,
+            'price' => '1111',
+            'update_price' => NULL,
+            'item_tax_type' => 'standard',
+            'detail' => '',
+            'images' =>
+                array (
+                ),
+            'name' => 'MulitTest6',
+            'top_of_list' => true,
+            'apps' =>
+                array (
+                    'category' =>
+                        array (
+                            'enabled' =>
+                                array (
+                                    0 =>
+                                        array (
+                                            'id' => '1921179',
+                                            'parents' =>
+                                                array (
+                                                ),
+                                        ),
+                                ),
+                        ),
+                    'label' =>
+                        array (
+                        ),
+                    'quantity_limit' =>
+                        array (
+                        ),
+                    'sale' =>
+                        array (
+                            'discount_rate' => 0,
+                        ),
+                    'shipping_fee' =>
+                        array (
+                            'enabled' =>
+                                array (
+                                ),
+                        ),
+                    'subscription' =>
+                        array (
+                        ),
+                    'digital' =>
+                        array (
+                        ),
+                    'club_t' =>
+                        array (
+                        ),
+                    'sp_case' =>
+                        array (
+                        ),
+                    'sales_period' =>
+                        array (
+                        ),
+                    'pre_order' =>
+                        array (
+                        ),
+                ),
+        ),
+), array (
+    'item' =>
+        array (
+            'variations' =>
+                array (
+                    0 =>
+                        array (
+                            'id' => '',
+                            'name' => 'ブラック/M',
+                            'stock' => '1000',
+                        ),
+                    1 =>
+                        array (
+                            'id' => '',
+                            'name' => 'ブラック/L',
+                            'stock' => '1000',
+                        ),
+                ),
+            'visible' => true,
+            'stock' => 0,
+            'price' => '1111',
+            'update_price' => NULL,
+            'item_tax_type' => 'standard',
+            'detail' => '',
+            'images' =>
+                array (
+                ),
+            'name' => 'MulitTest7',
+            'top_of_list' => true,
+            'apps' =>
+                array (
+                    'category' =>
+                        array (
+                            'enabled' =>
+                                array (
+                                    0 =>
+                                        array (
+                                            'id' => '1921179',
+                                            'parents' =>
+                                                array (
+                                                ),
+                                        ),
+                                ),
+                        ),
+                    'label' =>
+                        array (
+                        ),
+                    'quantity_limit' =>
+                        array (
+                        ),
+                    'sale' =>
+                        array (
+                            'discount_rate' => 0,
+                        ),
+                    'shipping_fee' =>
+                        array (
+                            'enabled' =>
+                                array (
+                                ),
+                        ),
+                    'subscription' =>
+                        array (
+                        ),
+                    'digital' =>
+                        array (
+                        ),
+                    'club_t' =>
+                        array (
+                        ),
+                    'sp_case' =>
+                        array (
+                        ),
+                    'sales_period' =>
+                        array (
+                        ),
+                    'pre_order' =>
+                        array (
+                        ),
+                ),
+        ),
+)]);
+
+$app->mulit_items->editItems([array (
+    'item_id' => '23124163',
+    'item' =>
+        array (
+            'variations' =>
+                array (
+                    0 =>
+                        array (
+                            'id' => '',
+                            'name' => 'ブラック/XL',
+                            'stock' => '1000',
+                        ),
+                    1 =>
+                        array (
+                            'id' => '',
+                            'name' => 'ブラック/L',
+                            'stock' => '1000',
+                        ),
+                ),
+            'visible' => true,
+            'stock' => 0,
+            'price' => '1111',
+            'update_price' => NULL,
+            'item_tax_type' => 'standard',
+            'detail' => '',
+            'images' =>
+                array (
+                ),
+            'name' => 'MulitTest6',
+            'top_of_list' => true,
+            'apps' =>
+                array (
+                    'category' =>
+                        array (
+                            'enabled' =>
+                                array (
+                                    0 =>
+                                        array (
+                                            'id' => '1921179',
+                                            'parents' =>
+                                                array (
+                                                ),
+                                        ),
+                                ),
+                        ),
+                    'label' =>
+                        array (
+                        ),
+                    'quantity_limit' =>
+                        array (
+                        ),
+                    'sale' =>
+                        array (
+                            'discount_rate' => 0,
+                        ),
+                    'shipping_fee' =>
+                        array (
+                            'enabled' =>
+                                array (
+                                ),
+                        ),
+                    'subscription' =>
+                        array (
+                        ),
+                    'digital' =>
+                        array (
+                        ),
+                    'club_t' =>
+                        array (
+                        ),
+                    'sp_case' =>
+                        array (
+                        ),
+                    'sales_period' =>
+                        array (
+                        ),
+                    'pre_order' =>
+                        array (
+                        ),
+                ),
+        ),
+), array (
+    'item_id' => '23124164',
+    'item' =>
+        array (
+            'variations' =>
+                array (
+                    0 =>
+                        array (
+                            'id' => '',
+                            'name' => 'ブラック/M',
+                            'stock' => '1000',
+                        ),
+                    1 =>
+                        array (
+                            'id' => '',
+                            'name' => 'ブラック/L',
+                            'stock' => '1000',
+                        ),
+                ),
+            'visible' => true,
+            'stock' => 0,
+            'price' => '1111',
+            'update_price' => NULL,
+            'item_tax_type' => 'standard',
+            'detail' => '',
+            'images' =>
+                array (
+                ),
+            'name' => 'MulitTest7',
+            'top_of_list' => true,
+            'apps' =>
+                array (
+                    'category' =>
+                        array (
+                            'enabled' =>
+                                array (
+                                    0 =>
+                                        array (
+                                            'id' => '1921179',
+                                            'parents' =>
+                                                array (
+                                                ),
+                                        ),
+                                ),
+                        ),
+                    'label' =>
+                        array (
+                        ),
+                    'quantity_limit' =>
+                        array (
+                        ),
+                    'sale' =>
+                        array (
+                            'discount_rate' => 0,
+                        ),
+                    'shipping_fee' =>
+                        array (
+                            'enabled' =>
+                                array (
+                                ),
+                        ),
+                    'subscription' =>
+                        array (
+                        ),
+                    'digital' =>
+                        array (
+                        ),
+                    'club_t' =>
+                        array (
+                        ),
+                    'sp_case' =>
+                        array (
+                        ),
+                    'sales_period' =>
+                        array (
+                        ),
+                    'pre_order' =>
+                        array (
+                        ),
+                ),
+        ),
+)]);
+```
+
+> orders操作
+```php
+var_dump($app->mulit_orders->getOrdersId(['limit' => 50,
+        'words' => "",
+        'order_by' => "ordered_desc",
+        'status' => [],
+        'payment' => [],
+        'order_type' => 'all'
+        ]));
+var_dump($app->mulit_orders->getOrders(['unique_keys' => ['0B14AF0F2EEC413C']]));
+
+
+```

@@ -10,7 +10,7 @@ use Yituo\Core\MultiBaseClient;
 class MulitClient extends MultiBaseClient
 {
     /**
-     * ['limit' => 50,
+     * $params = ['limit' => 50,
         'words' => ""
         'order_by' => "ordered_desc"
         'status' => [],
