@@ -106,10 +106,31 @@ $app->order->updateOrder($order_item_id, $status, $add_comment, $atobarai_status
 $app->mulit_categories->addCategories([['name' => 'bbb','parent_id' => '0'], ['name' => 'cccc','parent_id' => '0']]);
 $app->mulit_categories->deleteCategories[['id' => "1921361"], ['id' => "1921361"]]);
 var_dump($app->mulit_categories->getCategories());
+print_r($app->mulit_categories->sortCategories([
+    [ 'id' => 1941924, 
+      'list_order' => 1, 
+      'children' => [
+            ['id' => 1941927, 'list_order' => 1], 
+            ['id' => 1941928, 'list_order' => 2]
+      ]
+     ], 
+     [ 'id' => 1941925, 
+       'list_order' => 2, 
+       'children' => [
+                 ['id' => 1941929, 'list_order' => 1], 
+                 ['id' => 1941930, 'list_order' => 2]
+       ]
+     ],
+     [ 'id' => 1941926, 
+       'list_order' => 3
+     ]
+  ]
+));
+
 ```
 > items操作
 ```php
-var_dump($app->mulit_items->getItems());
+var_dump($app->mulit_items->getItemIds());
 var_dump($app->mulit_items->getItem([['item_id' => '23124163'], ['item_id' => '23124163']]));
 $app->mulit_items->sortItems(['item_ids' => ["23120451", "23061078", "23086207", "23086212", "23085510"]]);
 $app->mulit_items->deleteItems(['item_ids' => ["23123894", "23120451"]]);

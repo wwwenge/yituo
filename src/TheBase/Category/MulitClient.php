@@ -34,4 +34,25 @@ class MulitClient extends MultiBaseClient
         return current($this->multiRequest([$this->makeRequest('shop_admin/api/item_categories/', null, [], "get")]));
     }
 
+    public function sortCategories($categories) {
+        $children = [];
+        $result = [];
+        $parent = array_map(function ($params) use(&$children) {
+            if(isset($params['children'])) {
+                array_map(function ($params) use(&$children) {
+                    array_push($children, $this->makeRequest('item_category/item_category_ajax/update_order', http_build_query($params)));
+                }, $params['children']);
+            }
+            return $this->makeRequest('item_category/item_category_ajax/update_order', http_build_query($params));
+        }, $categories);
+
+        if($children) {
+            $result = $this->multiRequest($children);
+        }
+
+        $result = array_merge_recursive($this->multiRequest($parent), $result);
+        return $result;
+
+    }
+
 }

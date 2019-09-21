@@ -9,7 +9,7 @@ use Yituo\Core\MultiBaseClient;
 
 class MulitClient extends MultiBaseClient
 {
-    public function getItems() {
+    public function getItemIds() {
         return current($this->multiRequest([$this->makeRequest('shop_admin/api/items/ids/', null, [], "get")]));
     }
 

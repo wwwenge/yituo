@@ -117,8 +117,6 @@ class MultiBaseClient
         $response = $this->performRequest('users/login');
         $params = [];
 
-
-
         if($response->getStatusCode() == 200) {
             $document = pq::newDocumentHTML($response->getBody());
             $document->find("#userLoginForm input")->each(function(DOMElement $element) use(&$params) {
