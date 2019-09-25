@@ -167,11 +167,11 @@ trait HttpRequests
      * @return void
      */
 
-    public function multiRequest($requests) {
+    public function multiRequest($requests, $fn=null) {
         $pool = new Pool($this->getHttpClient(), $this->requests($requests), [
             'concurrency' => $this->getConcurrency(),
             'options'     => $this->getPoolOptions(),
-            'fulfilled'   => $this->handleAddSuccess(),
+            'fulfilled'   => $fn ? $fn : $this->handleAddSuccess(),
             'rejected'    => $this->handleAddFaild(),
         ]);
 

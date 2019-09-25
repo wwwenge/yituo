@@ -9,17 +9,22 @@ use Yituo\Core\MultiBaseClient;
 
 class MulitClient extends MultiBaseClient
 {
-    public function getItemIds() {
+    public function getIds() {
         return current($this->multiRequest([$this->makeRequest('shop_admin/api/items/ids/', null, [], "get")]));
     }
 
-    public function getItem($products) {
-        return $this->multiRequest(array_map(function ($product) {
+    public function getItems($products, $fn=null) {
+        $result = $this->multiRequest(array_map(function ($product) {
             $itemID = $product['item_id'];
             unset($product['item_id']);
             return $this->makeRequest(sprintf('shop_admin/api/items/view/%s', $itemID), null, [], "get");
-        }, $products));
+        }, $products), $fn);
+
+        if (!$fn) {
+            return $result;
+        }
     }
+
 
     public function addItems($products) {
         return $this->multiRequest(array_map(function ($product) {
