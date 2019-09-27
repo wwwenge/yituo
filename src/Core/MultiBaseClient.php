@@ -227,6 +227,10 @@ class MultiBaseClient
         };
     }
 
+    public function resetOutput() {
+         $this->output = [];
+    }
+
     public function getOutput() {
         return $this->output;
     }

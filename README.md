@@ -135,6 +135,9 @@ var_dump($app->mulit_items->getItems([['item_id' => '23124163'], ['item_id' => '
 $app->mulit_items->getItems([['item_id' => '23124163'], ['item_id' => '23124163']], function(GuzzleHttp\Psr7\Response $response, $index) {
     var_dump((string)$response->getBody());
 });
+print_r($app->mulit_items->getAvailableIds());
+print_r($app->mulit_items->createItemIds(100));
+print_r($app->mulit_items->searchItems('fakeproduct'));
 $app->mulit_items->sortItems(['item_ids' => ["23120451", "23061078", "23086207", "23086212", "23085510"]]);
 $app->mulit_items->deleteItems(['item_ids' => ["23123894", "23120451"]]);
 var_dump($app->mulit_items->uploadImages(['H:/2.jpg', 'H:/3.jpg']));

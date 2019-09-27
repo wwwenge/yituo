@@ -9,8 +9,49 @@ use Yituo\Core\MultiBaseClient;
 
 class MulitClient extends MultiBaseClient
 {
+    public $fakeProduct = ['item' => [ 'variations' => [],
+                                        'visible' => false,
+                                        'stock' => '1000',
+                                        'price' => '1000',
+                                        'item_tax_type' => 'standard',
+                                        'detail' => '',
+                                        'images' => [],
+                                        'name' => 'FakeProduct',
+                                        'top_of_list' => false,
+                                        'apps' => [ 'category' => ['enabled' => []],
+                                            'label' => [],
+                                            'quantity_limit' => [],
+                                            'sale' => ['discount_rate' => 0],
+                                            'shipping_fee' => ['enabled' => []],
+                                            'subscription' => [],
+                                            'digital' => [],
+                                            'club_t' => [],
+                                            'sp_case' => [],
+                                            'sales_period' => [],
+                                            'pre_order' => []
+                                        ]
+                                    ]
+                            ];
+
     public function getIds() {
         return current($this->multiRequest([$this->makeRequest('shop_admin/api/items/ids/', null, [], "get")]));
+    }
+
+    public function createItemIds($qty = 1) {
+        $products = [];
+        for($i = 0; $i < $qty; $i++) {
+            array_push($products, $this->fakeProduct);
+        }
+
+        return $this->addItems($products);
+    }
+
+    public function getAvailableIds() {
+        return current($this->searchItems("fakeproduct"));
+    }
+
+    public function searchItems($keyword) {
+        return $this->multiRequest([$this->makeRequest(sprintf('shop_admin/api/items/search/?keyword=%s', $keyword), null, [], "get")]);
     }
 
     public function getItems($products, $fn=null) {
@@ -24,7 +65,6 @@ class MulitClient extends MultiBaseClient
             return $result;
         }
     }
-
 
     public function addItems($products) {
         return $this->multiRequest(array_map(function ($product) {
