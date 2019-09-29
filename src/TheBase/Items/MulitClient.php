@@ -43,7 +43,7 @@ class MulitClient extends MultiBaseClient
             array_push($products, $this->fakeProduct);
         }
 
-        return $this->addItems($products);
+        return $this->addItems($products, function(\GuzzleHttp\Psr7\Response $response, $index) {});
     }
 
     public function getAvailableIds() {
@@ -66,10 +66,14 @@ class MulitClient extends MultiBaseClient
         }
     }
 
-    public function addItems($products) {
+    public function addItems($products, $fn=null) {
         return $this->multiRequest(array_map(function ($product) {
             return $this->makeRequest('shop_admin/api/items/add', json_encode($product));
-        }, $products));
+        }, $products), $fn);
+
+        if (!$fn) {
+            return $result;
+        }
     }
 
     public function editItems($products) {
