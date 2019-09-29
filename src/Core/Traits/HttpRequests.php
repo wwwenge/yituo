@@ -168,6 +168,8 @@ trait HttpRequests
      */
 
     public function multiRequest($requests, $fn=null) {
+        $this->resetOutput();
+
         $pool = new Pool($this->getHttpClient(), $this->requests($requests), [
             'concurrency' => $this->getConcurrency(),
             'options'     => $this->getPoolOptions(),
