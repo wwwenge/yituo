@@ -51,12 +51,11 @@ class Client extends BaseClient
      * @param array $options
      * @return array
      */
-    public function addItem(string $title, string $price, string $stock, ...$options) {
+    public function addItem($options) {
         $allowParams = ['title', 'detail', 'price', 'stock', 'visible', 'identifier', 'list_order', 'variation', 'variation_stock', 'variation_identifier'];
-        return $this->httpPost('/1/items/add', $this->filterOptions($allowParams, [
-            'title' => $title,
-            'price' => $price,
-            'stock' => $stock], $options));
+
+        $options = array_intersect_key($options, array_flip($allowParams));
+        return $this->httpPost('/1/items/add', $options);
     }
 
     /**
@@ -65,9 +64,12 @@ class Client extends BaseClient
      * @param array $options
      * @return array
      */
-    public function editItem(int $item_id, ...$options) {
+    public function editItem(int $item_id, $options) {
         $allowParams = ['item_id', 'title', 'detail', 'price', 'stock', 'visible', 'identifier', 'list_order', 'variation_id', 'variation', 'variation_stock', 'variation_identifier'];
-        return $this->httpPost('/1/items/edit', $this->filterOptions($allowParams, ['item_id' => $item_id], $options));
+        $options['item_id'] = $item_id;
+        $options = array_intersect_key($options, array_flip($allowParams));
+
+        return $this->httpPost('/1/items/edit', $options);
     }
 
     /**

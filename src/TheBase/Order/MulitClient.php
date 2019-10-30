@@ -20,7 +20,7 @@ class MulitClient extends MultiBaseClient
     */
 
     public function getOrdersId($params) {
-        return current($this->multiRequest([$this->makeRequest('shop_admin/api/orders/summary', http_build_query($params))]));
+        return current($this->multiRequest([$this->makeRequest('shop_admin/api/orders/summary', json_encode($params))]));
     }
 
     /**
