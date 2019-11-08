@@ -15,6 +15,7 @@ namespace Yituo;
  * Class Factory.
  *
  * @method static \Yituo\TheBase\Application            TheBase(array $config)
+ * @method static \Yituo\BaiduAi\Application            BaiduAi(array $config)
  */
 
 class Factory
