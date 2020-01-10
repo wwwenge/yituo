@@ -6,8 +6,8 @@ use DOMElement;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
-use Yituo\Core\BaseClient;
 use phpQuery as pq;
+use Yituo\TheBase\BaseClient;
 
 class Client extends BaseClient
 {
@@ -52,7 +52,7 @@ class Client extends BaseClient
      * @return array
      */
     public function addItem($options) {
-        $allowParams = ['title', 'detail', 'price', 'stock', 'visible', 'identifier', 'list_order', 'variation', 'variation_stock', 'variation_identifier'];
+        $allowParams = ['title', 'detail', 'price', 'stock', 'visible', 'item_tax_type', 'identifier', 'list_order', 'variation', 'variation_stock', 'variation_identifier'];
 
         $options = array_intersect_key($options, array_flip($allowParams));
         return $this->httpPost('/1/items/add', $options);
@@ -65,7 +65,7 @@ class Client extends BaseClient
      * @return array
      */
     public function editItem(int $item_id, $options) {
-        $allowParams = ['item_id', 'title', 'detail', 'price', 'stock', 'visible', 'identifier', 'list_order', 'variation_id', 'variation', 'variation_stock', 'variation_identifier'];
+        $allowParams = ['item_id', 'title', 'detail', 'price', 'stock', 'visible', 'item_tax_type', 'identifier', 'list_order', 'variation_id', 'variation', 'variation_stock', 'variation_identifier'];
         $options['item_id'] = $item_id;
         $options = array_intersect_key($options, array_flip($allowParams));
 
@@ -78,7 +78,7 @@ class Client extends BaseClient
      * @return array
      */
     public function deleteItem(int $item_id) {
-        return $this->httpPost('/1/items/delete', $item_id);
+        return $this->httpPost('/1/items/delete', ['item_id' => $item_id]);
     }
 
     /**

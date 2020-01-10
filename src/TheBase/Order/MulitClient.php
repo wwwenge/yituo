@@ -5,7 +5,7 @@ namespace Yituo\TheBase\Order;
 use DOMElement;
 use Psr\Http\Message\RequestInterface;
 use phpQuery as pq;
-use Yituo\Core\MultiBaseClient;
+use Yituo\TheBase\MultiBaseClient;
 
 class MulitClient extends MultiBaseClient
 {

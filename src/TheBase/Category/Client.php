@@ -8,7 +8,7 @@
 
 namespace Yituo\TheBase\Category;
 
-use Yituo\Core\BaseClient;
+use Yituo\TheBase\BaseClient;
 
 class Client extends BaseClient
 {

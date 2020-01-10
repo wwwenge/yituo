@@ -9,7 +9,7 @@
 namespace Yituo\TheBase\User;
 
 
-use Yituo\Core\BaseClient;
+use Yituo\TheBase\BaseClient;
 
 class Client extends BaseClient
 {

@@ -8,7 +8,7 @@
 
 namespace Yituo\TheBase\Savings;
 
-use Yituo\Core\BaseClient;
+use Yituo\TheBase\BaseClient;
 
 class Client extends BaseClient
 {

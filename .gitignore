@@ -2,3 +2,5 @@
 /demo.php
 /*.lock
 /Knowlege
+.idea/*
+/.idea

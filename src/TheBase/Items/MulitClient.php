@@ -1,11 +1,10 @@
 <?php
 namespace Yituo\TheBase\Items;
 
-
 use DOMElement;
 use Psr\Http\Message\RequestInterface;
 use phpQuery as pq;
-use Yituo\Core\MultiBaseClient;
+use Yituo\TheBase\MultiBaseClient;
 
 class MulitClient extends MultiBaseClient
 {

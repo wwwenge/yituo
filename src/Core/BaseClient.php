@@ -13,21 +13,11 @@ use Yituo\Core\Traits\HttpRequests;
 
 class BaseClient
 {
-    use HttpRequests { request as performRequest; }
+    use HttpRequests { request as performRequest; multiRequest as performMultiRequest; }
     /**
      * @var \Yituo\Core\ServiceContainer
      */
     protected $app;
-
-    /**
-     * @var \Yituo\TheBase\OAuth\Provider\BaseProvider
-     */
-    protected $token;
-
-    /**
-     * @var string
-     */
-    protected $baseUri;
 
     /**
      * BaseClient constructor.
@@ -36,15 +26,19 @@ class BaseClient
      * @param \Yituo\Core\Contracts\AccessTokenInterface|null $accessToken
      */
     
-    public function __construct(ServiceContainer $app, $token = null)
+    public function __construct(ServiceContainer $app)
     {
         $this->app = $app;
-        $this->token = $token ? $token : $this->app['oauth'];
     }
 
-    public function httpPost(string $url, array $data = [])
+    public function httpPost(string $url, array $data = [], array $query = [])
     {
-        return $this->request($url, 'POST', ['form_params' => $data]);
+        $options = ['form_params' => $data];
+        if ($query) {
+            $options['query'] = $query;
+        }
+
+        return $this->request($url, 'POST', $options);
     }
 
     public function httpGet(string $url, array $query = []) {
@@ -78,72 +72,11 @@ class BaseClient
      */
     protected function registerHttpMiddlewares()
     {
-        // retry
-        $this->pushMiddleware($this->retryMiddleware(), 'retry');
-        // access token
-        $this->pushMiddleware($this->accessTokenMiddleware(), 'access_token');
-        // log
-//        $this->pushMiddleware($this->logMiddleware(), 'log');
-    }
-
-    /**
-     * Return retry middleware.
-     *
-     * @return \Closure
-     */
-    protected function retryMiddleware()
-    {
-        return Middleware::retry(function (
-            $retries,
-            RequestInterface $request,
-            ResponseInterface $response = null,
-            $exception = null
-        ) {
-            if ($exception instanceof ConnectException || $exception instanceof RequestException) {
-                return true;
-            }
-
-            // Limit the number of retries to 2
-            if ($retries < $this->app->config->get('http.max_retries', 3) && $response && $body = $response->getBody()) {
-                // Retry on server errors
-                $response = json_decode($body, true);
-                if(json_last_error() == JSON_ERROR_NONE) {
-                    if (!empty($response['error']) && in_array($response['error'], ['invalid_request'], true)) {
-                        $this->token->refresh();
-//                    $this->app['logger']->debug('Retrying with refreshed access token.');
-
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }, function () {
-            return abs($this->app->config->get('http.retry_delay', 500));
-        });
-    }
-
-
-    /**
-     * 在header添加access token.
-     *
-     * @return \Closure
-     */
-    protected function accessTokenMiddleware()
-    {
-        return function (callable $handler) {
-            return function (RequestInterface $request, array $options) use ($handler) {
-                if ($this->token && stripos($this->app->config->get('http.base_uri'), $request->getUri()->getHost()) !== false) {
-                    $request = $this->token->applyToHeader($request, $options);
-                }
-
-                return $handler($request, $options);
-            };
-        };
     }
 
     /**
      * 过滤请求无效的参数
+     * @desc 只能过滤一维的无效参数
      *
      * @param array $allow
      * @param array $options
