@@ -18,7 +18,7 @@ use Yituo\Core\Traits\HttpRequests;
 use phpQuery as pq;
 use Yituo\Core\Traits\InteractsWithCache;
 
-class MultiBaseClient
+class BaiduAiClient
 {
     /**
      * 公用缓存类
@@ -36,8 +36,9 @@ class MultiBaseClient
     /**
      * @var string
      */
-    protected $baseUri = 'https://admin.thebase.in';
+    protected $baseUri = 'https://aip.baidubce.com';
 
+    protected $accessToken;
     /**
      * @var array
      */
@@ -49,7 +50,7 @@ class MultiBaseClient
      * 缓存前缀
      * @var string
      */
-    protected $cachePrefix = 'yituo.kernel.cookies.';
+    protected $cachePrefix = 'yituo.kernel.baiduai.token.';
 
     /**
      * cookies过期时间
@@ -81,7 +82,6 @@ class MultiBaseClient
         $this->registerHttpMiddlewares();
         $options = ['handler' => $this->getHandlerStack()];
         $options['base_uri'] = $this->baseUri;
-        $options['cookies'] = unserialize($this->getCookieJar());
 
         return $options;
     }
@@ -95,12 +95,12 @@ class MultiBaseClient
     }
 
     /**
-     * 获取缓存的Cookies
+     * 获取缓存的token
      * @return object
      */
-    public function getCookieJar() {
+    public function getToken() {
         if (!$this->getCache()->has($this->getCacheKey())) {
-            return $this->login();
+            return $this->getAccessToken();
         }
 
         return $this->getCache()->get($this->getCacheKey());
@@ -109,36 +109,16 @@ class MultiBaseClient
     }
 
     /**
-     * 获取登录缓存
+     * 获取token
      * @return \GuzzleHttp\Cookie\CookieJar
      */
-    public function login() {
+    public function getAccessToken() {
         $this->registerHttpMiddlewares();
-        $response = $this->performRequest('users/login');
-
-        $params = [];
+        $response = $this->performRequest('/oauth/2.0/token?grant_type=client_credentials&client_id=zVjC0WITUCWWTYhGMtdfV77C&client_secret=uft0uUAwUlGLgtrZUFG0cZoIvIfvAhIM');
 
         if($response->getStatusCode() == 200) {
-            $document = pq::newDocumentHTML($response->getBody());
-            $document->find("#userLoginForm input")->each(function(DOMElement $element) use(&$params) {
-                $params[$element->getAttribute("name")] = $element->getAttribute("value");
-            });
-
-            $params['data[User][mail_address]'] = $this->app['config']->get('oauth.username');
-            $params['data[User][password]']     = $this->app['config']->get('oauth.password');
-
-            $response = $this->performRequest($document->find("#userLoginForm")->attr('action'), 'post', ['form_params' => $params]);
-
-            if(!$this->checkIsLogin($response)) {
-                throw new RuntimeException('Failed to get cookies. Login fail');
-            }
-
-            return $this->setCookies($this->getCookies());
+            return $this->setAccessToken($response->getBody()->getContents());
         }
-    }
-
-    public function checkIsLogin($response) {
-        return stripos($this->getCurrentUrl($response), 'shop_id') !== false;
     }
 
     public function getCurrentUrl($response) {
@@ -151,7 +131,7 @@ class MultiBaseClient
      * @return string
      */
     protected function getCacheKey() {
-        return $this->cachePrefix.$this->app['config']->get('oauth.shop_name');
+        return $this->cachePrefix.'baiduai';
     }
 
     /**
@@ -161,14 +141,14 @@ class MultiBaseClient
      * @throws \Psr\SimpleCache\InvalidArgumentException
      * @throws \Yituo\Core\Exceptions\RuntimeException
      */
-    public function setCookies(\GuzzleHttp\Cookie\CookieJar $cookies) {
-        $this->getCache()->set($this->getCacheKey(), serialize($cookies), $this->expires);
+    public function setAccessToken($accessToken) {
+        $this->getCache()->set($this->getCacheKey(), $accessToken, $this->expires);
 
         if (!$this->getCache()->has($this->getCacheKey())) {
-            throw new RuntimeException('Failed to cache cookies.');
+            throw new RuntimeException('Failed to cache access token.');
         }
 
-        return serialize($cookies);
+        return $accessToken;
     }
 
     public function addHeader($header) {
@@ -183,7 +163,7 @@ class MultiBaseClient
      * 请求任务
      * @return Request
      */
-     public function requests($requests) {
+    public function requests($requests) {
         foreach($requests as $request) {
             yield $request;
         }
@@ -198,7 +178,7 @@ class MultiBaseClient
                 case 'resource':
                     $body = new \GuzzleHttp\Psr7\MultipartStream([['name' => 'file','contents' => $body]]);
                     $headers['Content-Type'] = 'multipart/form-data; boundary=' . $body->getBoundary();
-                break;
+                    break;
                 default:
                     $headers['Content-Type'] = 'application/x-www-form-urlencoded';
                     break;
@@ -208,6 +188,8 @@ class MultiBaseClient
             $headers['Content-Type'] = 'text/html';
         }
 
+        $this->accessToken = json_decode($this->getToken())->access_token;
+//        return new Request($method, sprintf("%s?access_token=%s", $endpoint, $this->accessToken), $headers, $body);
         return new Request($method, $endpoint, $headers, $body);
     }
 
@@ -229,7 +211,7 @@ class MultiBaseClient
     }
 
     public function resetOutput() {
-         $this->output = [];
+        $this->output = [];
     }
 
     public function getOutput() {
@@ -245,11 +227,18 @@ class MultiBaseClient
         $this->pushMiddleware($this->userAgentMiddleware(), 'useragent');
         $this->pushMiddleware($this->retryMiddleware(), 'retry');
         $this->pushMiddleware($this->effectiveUrlMiddleware(), 'effective');
+        $this->pushMiddleware($this->accessTokenMiddleware(), 'accesstoken');
     }
 
     protected function userAgentMiddleware() {
         return Middleware::mapRequest(function (RequestInterface $request) {
             return $request->withHeader('User-Agent', $this->headers['user-agent']);
+        });
+    }
+
+    protected function accessTokenMiddleware() {
+        return Middleware::mapRequest(function (RequestInterface $request) {
+            return $request->withUri($request->getUri()->withQuery(sprintf("access_token=%s", $this->accessToken)));
         });
     }
 

@@ -479,6 +479,29 @@ var_dump($app->mulit_orders->getOrdersId(['limit' => 50,
         'order_type' => 'all'
         ]));
 var_dump($app->mulit_orders->getOrders(['unique_keys' => ['0B14AF0F2EEC413C']]));
+```
 
+## 图片对比
+> 添加图片到图库, 添加
+```php
+# brief参数是用来配合自己系统的参考数据的
+# 成功后会返回一个cont_sign，这个是唯一值，用来删除或者更新,要保存起来
+var_dump($app->images_search_client->addSameHq([
+    ['image' => base64_encode(file_get_contents('H:/web/opencart/image/catalog/demo/canon_eos_5d_1.jpg')), 'brief' => json_encode(["id" => "1234", "name" => "acde"])],
+    ['image' => base64_encode(file_get_contents('H:/web/opencart/image/catalog/demo/2.jpg')), 'brief' => json_encode(["id" => "1234", "name" => "acde"])]
+]));
+```
 
+> 查找相同的图片
+```php
+var_dump($app->images_search_client->searchSameHq([
+    ['image' => base64_encode(file_get_contents('D:/7.jpg'))],
+    ['image' => base64_encode(file_get_contents('D:/2.jpg'))],
+]));
+```
+
+> 删除图片
+```php
+#删除多个图片，用;分割
+var_dump($app->images_search_client->deleteSameHq(['4053743853,3180309171;3053743853,3180329171']));
 ```
