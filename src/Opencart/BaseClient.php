@@ -20,9 +20,6 @@ class BaseClient extends CoreBaseClient
     {
         parent::__construct($app);
         $baseUri = $this->app->config->get('http.base_uri');
-
-//        $baseUri .= '/api/public/';
-        $baseUri .= '/kenza1/api/public/';
         $this->baseUri = $baseUri;
     }
 
